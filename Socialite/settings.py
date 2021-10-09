@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+
 from pathlib import Path
 from django.contrib.messages import constants 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,7 @@ SECRET_KEY = '&jw19h$0miq5w9#37o#b2$i7=swoh8*g69r0!ei4b1nxq*q3xj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://amigosss.herokuapp.com/']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -45,7 +46,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,9 +128,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR,'asset')
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 
-STATICFILES_DIRS =[os.path.join(BASE_DIR, 'static')]
+# STATICFILES_DIRS =[os.path.join(BASE_DIR, 'static')]
 
 
 MESSAGE_TAGS = {constants.ERROR : 'danger'}
