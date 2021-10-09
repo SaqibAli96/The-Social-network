@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block head_content %}
+  <link rel="stylesheet" href="{% static 'Profilepage/zuck.js-master/demo/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'Profilepage/zuck.js-master/dist/zuck.min.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'Profilepage/zuck.js-master/dist/skins/snapgram.css'%}">
+{% endblock head_content %}
+
+{% block nav_btn1 %}
+<button type="button" class="btn btn-outline-primary ml-2" data-toggle="modal" data-target="#postModal">Post</button>
+{% endblock nav_btn1 %}
+
+{% block css  %}
+
+
+
+#post_img
+{
+  width:450;
+  height:400;
+  margin:5%;
+}
+#post_div 
+{
+  width: 750;
+  height :654;
+  padding:3px;
+}
+.container{
+  
+  
+  width : 100%;
+  height : 100%;
+  background-color :#0D0205;
+
+}
+
+{% endblock css  %}
+
+{% block body %}
+
+
+{% for i in posts %}
+  <div class='container my-4' id="post_div" >
+    <div class="card ">
+ 
+      {% if i.user%}
+        <h4 class="card-header "><a href="{% url 'userprofile' i.user %}" style="color:Viridian;">{{i.user}}</a><small class='ml-2'>{{i.date.date}}</small></h4>
+      {% endif %}
+    <div class="card-body mx-5">
+    <h5 class="card-title"></h5>
+    <p class="card-text"><b>{{i.caption}}</b></p>
+    {% if i.image %}
+      <img src="{{i.image.url }}" alt='Image' id='post_img'>
+    {% endif %}
+    <hr size='30px'>
+    {% if i in liked_post%}
+    <button class="btn btn-light mr-3 like" id="{{ i.id }}">
+       <a href="{% url  'like_dislike_post' %}" style="color:red;" id="likebtn{{ i.id }}"> Liked </a>
+    </button>
+    {% else %}
+    <button class="btn btn-light mr-3 like" id="{{ i.id }}">
+       <a href="{% url  'like_dislike_post' %}" style="color:red;" id="likebtn{{ i.id }}"> Like </a>
+    </button>
+    {% endif %}
+
+
+
+
+    
+    <a role="button" class="btn btn-info mr-2" href={% url 'comment' i.id %}>Comment</a>
+    
+    <button class="btn btn-info mr-2">Repost</button>
+    
+    {% if  request.user == i.user %}
+    <a class="btn btn-danger mr-3" href={% url 'delPost' i.id %}>Delete</a>
+    <a type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#EditPostModal"%}>Edit</a>
+    {% endif %}
+    
+    </div>
+  </div>
+</div>
+
+{% endfor %} 
+
+<img src="" alt=""%}
+{% endblock body %}
+
+{% block modals %}
+<!-- Button trigger modal -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Let's Show</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" >
+        <form action="/Profilepage/post" method="POST"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="image">Image :</label>
+            <input type="file" name="image" id="image">
+          <br><br><br>
+        <label for='caption'>Caption : </label>
+        <br>
+          <textarea name='caption' id='caption' cols='55' rows='10' placeholder="" class='ml-4 '></textarea>
+        <hr size='30'>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="SUBMIT" class="btn btn-primary" >Upload Post</button>
+        </form>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock modals %}
+{% block modals2 %}
+  <div class="modal fade" id="EditPostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Let's Show</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" >
+        <form action="/Profilepage/post" method="POST"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="image">Image :</label>
+            <input type="file" name="image" id="image">
+          <br><br><br>
+        <label for='caption'>Caption : </label>
+        <br>
+          <textarea name='caption' id='caption' cols='55' rows='10' placeholder="" class='ml-4 '></textarea>
+        <hr size='30'>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="SUBMIT" class="btn btn-primary" >Update Post</button>
+        </form>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock modals2 %}
+
+{% block js  %}
+
+<script>
+$(".like").click(function (e) {
+    var id = this.id;
+    var href = $(".like").find('a').attr('href');
+    console.log(href,id)
+    e.preventDefault();
+
+    $.ajax({
+      url: href,
+      data : {'likeId': id
+    },
+    success:function(response)
+    {
+      if (response.liked)
+      {
+        $('#likebtn' + id).html('Liked');
+      }
+      else{
+         $('#likebtn' + id).html('Like');
+      }
+    }
+
+  })
+
+});
+
+</script>
+
+
+{% endblock js %}

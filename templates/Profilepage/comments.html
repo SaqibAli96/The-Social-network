@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block css %}
+
+
+{% endblock css %}
+
+
+
+
+{% block body %}
+<div class="card">
+  <div class="card-body">
+    <p><b>Comments:{{b.comment}}</p>
+  
+  </div>
+</div>
+{%for i in comments%}
+  
+    {% ifequal posts.id b.comm_post.id%}  
+        <p>{{i.by}}:{{i.comment}}</p>
+    {% endifequal %}
+  
+{% endfor %}
+
+
+{% endblock body %}

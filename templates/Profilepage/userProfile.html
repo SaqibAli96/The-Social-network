@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block css %}
+.container{
+
+    text-indent:10px;
+
+}
+.pst
+{
+    width:350px;
+    height:200px;
+    margin-bottom: 30px;
+
+}
+.userImage
+{
+
+    width:230px;
+    height:200px;
+    border-radius : 10px; 
+     
+}
+
+.info
+{
+    padding-top: 2%;
+    padding-left:3%; 
+}
+hr
+{
+    border-top: 2px solid #000000;
+
+}
+vr{
+
+    border-left: 2px solid #000000;
+}
+#follow{
+    color : blue;
+}
+#follow:hover{
+    color : white;
+}
+   
+  
+{% endblock css %}
+
+{% block body %}
+
+<div class='container my-4'>
+    <div class='media'>
+        
+        <img src="{{userImg.url}}" class='align-self-start my-4 mx-4 userImage'  alt='...'>
+        <vr>
+        <div class='media-body info'>
+            <b><h3 class='mt-0'>{{user_obj.username}}
+            {% if request.user == user_obj %}
+            <a type="button" class="btn btn-outline" data-toggle="modal" data-target="#EditModal">
+                Edit Profile
+            </a>
+            {% elif connection %}
+            <a type='button' class="btn btn-outline-primary mx-2" id='follow' role="button" href="{% url 'follow' user_obj.username %}">Unfollow</a>
+            
+            {% elif not connection %}
+            
+            <a type='button' class="btn btn-outline-primary mx-2" id='follow' role="button" href="{% url 'follow' user_obj.username %}">Follow</a>
+            
+            {% endif %}
+            <b></h2>
+        
+            <p><b>Follower : {{follower}}</b></p>
+            <p><b>Following : {{following}}</b></p>
+            <p><b><a> Bio </a>: {{bio  }}</b></p>
+            
+            <a class="btn btn-outline-primary" href="about/">About..</a>
+        </div>
+    </div>
+    
+    
+    <hr>
+    
+    <div class='row'>
+        {% for i in posts %}
+        {% for j in i %}
+        <div class='col-md-4'>
+            <img src="{{j.image.url}}" alt="Image" class='pst'>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>    
+</div>
+
+{% endblock body %}
+
+{% block modals %}
+<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="EditModalLabel">Edit Profile</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form action="{{ request.user }}/edit" method="post"  enctype="multipart/form-data">
+               {% csrf_token %}
+            <div class="form-group">
+              <label for="BioInput">Bio</label>
+              <input type="text" class="form-control" id="BioInput" name="Bio">
+              <br>
+              <label for="image">Image : </label>
+              <br>
+              <input type="file" name="image" id="image">
+            </div>
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Change</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock modals %}
+
+{% block js %}
+<script  type="text/javascript">
+    $("#follow").click(function(e){
+        e.preventDefault();
+        var href = this.href;
+        $.ajax({ 
+            url : href,
+            success : function (response){
+                console.log(response);
+                if(response["following"]){
+                    $("#follow").html("Unfollow");
+                }
+                else {
+                    $("#follow").html("Follow");
+                }
+            
+            
+            }    
+        });
+     })
+</script>
+{% endblock js %}
